@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -23,6 +24,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
  */
 @Entity
 @Table(name = "PASSENGER")
+@XmlRootElement
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope = Passenger.class)
 @JsonInclude(Include.NON_EMPTY)
 public class Passenger implements Serializable {
@@ -51,7 +53,7 @@ public class Passenger implements Serializable {
 
 	@NotNull
 	@Column(name = "PHONE", unique = true)
-	private long phone; // Phone numbers must be unique
+	private String phone; // Phone numbers must be unique
 
 	@OneToMany(mappedBy = "passenger")
 	private List<Reservation> reservations;
@@ -99,11 +101,11 @@ public class Passenger implements Serializable {
 		this.gender = gender;
 	}
 
-	public long getPhone() {
+	public String getPhone() {
 		return phone;
 	}
 
-	public void setPhone(long phone) {
+	public void setPhone(String phone) {
 		this.phone = phone;
 	}
 

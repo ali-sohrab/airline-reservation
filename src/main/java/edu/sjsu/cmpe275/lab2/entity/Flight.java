@@ -14,13 +14,16 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSchemaType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 /**
  * @author Sohrab-Ali
@@ -28,6 +31,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
  */
 @Entity
 @Table(name = "FLIGHT")
+@XmlRootElement
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "flightNumber", scope = Flight.class)
 @JsonInclude(Include.NON_EMPTY)
 public class Flight implements Serializable {
@@ -57,12 +61,12 @@ public class Flight implements Serializable {
 	 */
 	@NotNull
 	@Column(name = "DEP_TIME")
-	@JsonFormat(pattern = "yyyy-mm-dd-hh")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd-HH", timezone = "America/Los_Angeles")
 	private Date departureTime;
 
 	@NotNull
 	@Column(name = "ARR_TIME")
-	@JsonFormat(pattern = "yyyy-mm-dd-hh")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd-HH", timezone = "America/Los_Angeles")
 	private Date arrivalTime;
 
 	@NotNull
@@ -84,6 +88,21 @@ public class Flight implements Serializable {
 	private List<Passenger> passengerList;
 
 	public Flight() {
+	}
+
+	public Flight(String flightNumber, int price, String from, String to, Date departureTime, Date arrivalTime,
+			String description, int seatsLeft, Plane plane, List<Passenger> passengerList) {
+		super();
+		this.flightNumber = flightNumber;
+		this.price = price;
+		this.from = from;
+		this.to = to;
+		this.departureTime = departureTime;
+		this.arrivalTime = arrivalTime;
+		this.description = description;
+		this.seatsLeft = seatsLeft;
+		this.plane = plane;
+		this.passengerList = passengerList;
 	}
 
 	public String getFlightNumber() {

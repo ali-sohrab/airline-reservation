@@ -29,7 +29,7 @@ public class FlightController {
 
 	private static Flight flight = null;
 
-	@PostMapping("/flight/{flightNumber}")
+	@PostMapping(value = "/flight/{flightNumber}", produces = { MediaType.APPLICATION_JSON_VALUE })
 	public ResponseEntity<Flight> createFlight(
 			@PathVariable(name = "flightNumber", required = true) String flightNumber,
 			@RequestParam(name = "price", required = true) int price,
@@ -54,8 +54,8 @@ public class FlightController {
 		}
 	}
 
-	@GetMapping(value = "/flight/{flightNumber}", produces = { MediaType.APPLICATION_XML_VALUE })
-	public ResponseEntity<Object> getFlightAsXml(
+	@GetMapping(value = "/flight/{flightNumber}", params = "xml=true", produces = { MediaType.APPLICATION_JSON_VALUE })
+	public ResponseEntity<Flight> getFlightAsXml(
 			@PathVariable(name = "flightNumber", required = true) String flightNumber) {
 		flight = iFlightService.getFlight(flightNumber);
 		if (flight != null) {
@@ -68,7 +68,7 @@ public class FlightController {
 	}
 
 	@GetMapping(value = "/flight/{flightNumber}", produces = { MediaType.APPLICATION_JSON_VALUE })
-	public ResponseEntity<Object> getFlightAsJson(
+	public ResponseEntity<Flight> getFlightAsJson(
 			@PathVariable(name = "flightNumber", required = true) String flightNumber) {
 		flight = iFlightService.getFlight(flightNumber);
 		if (flight != null) {
@@ -80,7 +80,7 @@ public class FlightController {
 		}
 	}
 
-	@PutMapping("/flight/{flightNumber}")
+	@PutMapping(value = "/flight/{flightNumber}", produces = { MediaType.APPLICATION_JSON_VALUE })
 	public ResponseEntity<Flight> updateFlight(
 			@PathVariable(name = "flightNumber", required = true) String flightNumber,
 			@RequestParam(name = "price", required = true) int price,

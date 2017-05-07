@@ -4,7 +4,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class ErrorResponse {
-	
+
 	private String code;
 	private String msg;
 
@@ -12,7 +12,6 @@ public class ErrorResponse {
 	}
 
 	public ErrorResponse(String code, String msg) {
-		super();
 		this.code = code;
 		this.msg = msg;
 	}

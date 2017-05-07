@@ -1,5 +1,12 @@
 package edu.sjsu.cmpe275.lab2.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.XML;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -11,8 +18,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import edu.sjsu.cmpe275.lab2.entity.Reservation;
 import edu.sjsu.cmpe275.lab2.error.ErrorResponse;
+import edu.sjsu.cmpe275.lab2.error.TransactionException;
 import edu.sjsu.cmpe275.lab2.service.IReservationService;
 
 /**
@@ -27,43 +38,55 @@ public class ReservationController {
 
 	private static Reservation res = null;
 
-	@PostMapping("/reservation")
+	private HashMap<String, Reservation> response;
+
+	@PostMapping(value = "/reservation", produces = { MediaType.APPLICATION_XML_VALUE })
 	public ResponseEntity<Object> makeReservation(@RequestParam(name = "passengerId", required = true) long id,
-			@RequestParam(name = "flightLists", required = true) String flightLists) {
+			@RequestParam(name = "flightLists", required = true) String flightLists) throws Exception {
 		res = iReservationService.makeReservation(id, flightLists);
 
-		if (res != null) {
-			return ResponseEntity.ok(res);
-		} else {
-			ErrorResponse errorResponse = new ErrorResponse("400", "Sorry, time overlap, total passengers/capacity");
-			return new ResponseEntity(errorResponse, HttpStatus.BAD_REQUEST);
+		ObjectMapper objectMapper = new ObjectMapper();
+		try {
+			String ress = objectMapper.writeValueAsString(res);
+			JSONObject jsonObject = new JSONObject(ress);
+			return ResponseEntity.ok(XML.toString(jsonObject));
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		} catch (TransactionException e) {
+			Map<String, ErrorResponse> err = new HashMap<>();
+			ErrorResponse errorResponse = new ErrorResponse("400", e.getMessage());
+			err.put("BadRequest", errorResponse);
+			return new ResponseEntity(err, HttpStatus.BAD_REQUEST);
 		}
+		return null;
 	}
 
-	@GetMapping(value = "/reservation/{number}", produces = { MediaType.APPLICATION_JSON_VALUE })
+	@GetMapping("/reservation/{number}")
 	public ResponseEntity<Object> getReservation(@PathVariable(name = "number", required = true) long orderNumber) {
 
 		res = iReservationService.getReservation(orderNumber);
-
+		response = new HashMap<String, Reservation>();
 		if (res != null) {
-			return ResponseEntity.ok(res);
+			response.put("reservation", res);
+			return ResponseEntity.ok(response);
 		} else {
+			Map<String, ErrorResponse> err = new HashMap<>();
 			ErrorResponse errorResponse = new ErrorResponse("404",
 					"Reservation with number " + orderNumber + " does not exist");
-			return new ResponseEntity(errorResponse, HttpStatus.BAD_REQUEST);
+			err.put("BadRequest", errorResponse);
+			return new ResponseEntity(err, HttpStatus.BAD_REQUEST);
 		}
 	}
 
-	@GetMapping(value = "/reservation", produces = { MediaType.APPLICATION_XML_VALUE })
+	@GetMapping(value = "/reservation", produces = { MediaType.APPLICATION_JSON_VALUE })
 	public ResponseEntity<Object> searchReservation(@RequestParam(name = "passengerId", required = true) long id,
 			@RequestParam(name = "from", required = true) String from,
 			@RequestParam(name = "to", required = true) String to,
 			@RequestParam(name = "flightNumber", required = true) String flightNumber) {
-
-		res = iReservationService.searchReservation(id, from, to, flightNumber);
-
-		if (res != null) {
-			return ResponseEntity.ok(res);
+		Set<Reservation> responseSet;
+		responseSet = iReservationService.searchReservation(id, from, to, flightNumber);
+		if (responseSet != null) {
+			return ResponseEntity.ok(responseSet);
 		} else {
 			ErrorResponse errorResponse = new ErrorResponse("404", "Sorry, time overlap, total passengers/capacity");
 			return new ResponseEntity(errorResponse, HttpStatus.BAD_REQUEST);

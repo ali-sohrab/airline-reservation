@@ -16,12 +16,13 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 /**
  * @author Sohrab-Ali
@@ -29,6 +30,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
  */
 @Entity
 @Table(name = "RESERVATION")
+@XmlRootElement
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "orderNumber", scope = Reservation.class)
 @JsonInclude(Include.NON_EMPTY)
 public class Reservation implements Serializable {
@@ -46,7 +48,6 @@ public class Reservation implements Serializable {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "PASSENGER_ID")
-	@JsonIgnore
 	private Passenger passenger;
 
 	@ManyToMany(cascade = CascadeType.ALL)

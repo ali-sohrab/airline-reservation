@@ -1,10 +1,13 @@
 package edu.sjsu.cmpe275.lab2.service;
 
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import edu.sjsu.cmpe275.lab2.dao.IReservationDAO;
 import edu.sjsu.cmpe275.lab2.entity.Reservation;
+import edu.sjsu.cmpe275.lab2.error.TransactionException;
 
 /**
  * @author Sohrab-Ali
@@ -19,7 +22,7 @@ public class ReservationService implements IReservationService {
 	private static Reservation res = null;
 
 	@Override
-	public Reservation makeReservation(long id, String flightList) {
+	public Reservation makeReservation(long id, String flightList) throws TransactionException{
 		res = iReservationDAO.makeReservation(id, flightList);
 		return res;
 	}
@@ -37,9 +40,10 @@ public class ReservationService implements IReservationService {
 	}
 
 	@Override
-	public Reservation searchReservation(long id, String from, String to, String flightNumber) {
-		res = iReservationDAO.searchReservation(id, from, to, flightNumber);
-		return res;
+	public Set<Reservation> searchReservation(long id, String from, String to, String flightNumber) {
+		Set<Reservation> responseSet;
+		responseSet = iReservationDAO.searchReservation(id, from, to, flightNumber);
+		return responseSet;
 	}
 
 	@Override

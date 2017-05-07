@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import edu.sjsu.cmpe275.lab2.dao.IPassengerDAO;
 import edu.sjsu.cmpe275.lab2.entity.Passenger;
+import edu.sjsu.cmpe275.lab2.error.TransactionException;
 
 /**
  * @author Sohrab-Ali
@@ -32,7 +33,8 @@ public class PassengerService implements IPassengerService {
 	}
 
 	@Override
-	public Passenger addPassenger(String firstname, String lastname, int age, String gender, long phone) {
+	public Passenger addPassenger(String firstname, String lastname, int age, String gender, String phone)
+			throws TransactionException {
 		Passenger passenger = new Passenger();
 		passenger = setContent(passenger, firstname, lastname, age, gender, phone);
 		pass = iPassengerDAO.addPassenger(passenger);
@@ -40,7 +42,8 @@ public class PassengerService implements IPassengerService {
 	}
 
 	@Override
-	public Passenger updatePassenger(long id, String firstname, String lastname, int age, String gender, long phone) {
+	public Passenger updatePassenger(long id, String firstname, String lastname, int age, String gender, String phone)
+			throws TransactionException {
 		Passenger passenger = new Passenger();
 		passenger.setId(id);
 		passenger = setContent(passenger, firstname, lastname, age, gender, phone);
@@ -49,7 +52,7 @@ public class PassengerService implements IPassengerService {
 	}
 
 	private Passenger setContent(Passenger passenger, String firstname, String lastname, int age, String gender,
-			long phone) {
+			String phone) throws TransactionException {
 		passenger.setAge(age);
 		passenger.setFirstname(firstname);
 		passenger.setGender(gender);

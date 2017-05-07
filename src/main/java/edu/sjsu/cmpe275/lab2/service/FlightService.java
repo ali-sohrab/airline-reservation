@@ -37,8 +37,6 @@ public class FlightService implements IFlightService {
 	@Override
 	public Flight getFlight(String flightNumber) {
 		flight = iFlightDAO.getFlight(flightNumber);
-		System.out.println(flight.getArrivalTime().toString());
-		System.out.println(flight.getDepartureTime().toString());
 		return flight;
 	}
 
@@ -77,9 +75,8 @@ public class FlightService implements IFlightService {
 	}
 
 	private Date convertStringToDate(String time) throws ParseException {
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-mm-dd-hh");
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd-HH");
 		Date myDate = format.parse(time);
-		System.out.println(myDate.toString());
 		return myDate;
 	}
 
